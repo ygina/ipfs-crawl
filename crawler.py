@@ -24,9 +24,13 @@ def sniff_hashes(process: subprocess.Popen) -> None:
             return
         regex = r'.*received provider <.*> for (.*) \(addrs'
         match = re.match(regex, str(line))
-        if match:
-            file_hash = match.groups()[0]
-            write(file_hash)
+        if not match:
+            continue
+        file_hash = match.groups()[0]
+        if file_hash in indexed_hashes:
+            continue
+        indexed_hashes.add(file_hash)
+        write(file_hash)
 
 
 def load_index_hashes() -> None:
